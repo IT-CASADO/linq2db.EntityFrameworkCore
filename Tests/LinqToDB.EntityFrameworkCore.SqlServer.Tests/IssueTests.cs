@@ -37,14 +37,13 @@ namespace LinqToDB.EntityFrameworkCore.SqlServer.Tests
 
 			if (!_created)
 			{
-				//ctx.Database.EnsureDeleted();
+				ctx.Database.EnsureDeleted();
 				ctx.Database.EnsureCreated();
 				_created = true;
 			}
 
 			return ctx;
 		}
-
 
 		[Test]
 		public void Issue73Test()
@@ -88,6 +87,20 @@ namespace LinqToDB.EntityFrameworkCore.SqlServer.Tests
 			using var ctx = CreateContext();
 
 			var _ = ctx.Patents.AsSqlServer().ToLinqToDB().ToArray();
+		}
+
+		[Test]
+		public void Issue387Test()
+		{
+			using var ctx = CreateContext();
+
+			var q = ctx.BulkCopy(
+				[new Issue387Entity()
+				{
+					Id = 1,
+					Name = "E1"
+				}]
+			);
 		}
 
 		[Test(Description = "https://github.com/linq2db/linq2db.EntityFrameworkCore/issues/345")]

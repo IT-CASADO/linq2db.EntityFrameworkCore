@@ -5,12 +5,12 @@ namespace LinqToDB.EntityFrameworkCore.SqlServer.Tests.Models.IssueModel
 	public class IssueContext : DbContext
 	{
 		public DbSet<Issue73Entity> Issue73Entities { get; set; } = null!;
+		public DbSet<Issue387Entity> Issue387Entities { get; set; } = null!;
 
 		public DbSet<Patent> Patents { get; set; } = null!;
 
-		public IssueContext(DbContextOptions options) : base(options)
-		{
-		}
+		public IssueContext(DbContextOptions options)
+			: base(options) { }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -24,19 +24,14 @@ namespace LinqToDB.EntityFrameworkCore.SqlServer.Tests.Models.IssueModel
 					.HasPrincipalKey(x => new { x.Id });
 
 				b.HasData(
-				[
-					new Issue73Entity
-					{
-						Id = 2,
-						Name = "Name1_2",
-					},
+					new Issue73Entity { Id = 2, Name = "Name1_2", },
 					new Issue73Entity
 					{
 						Id = 3,
 						Name = "Name1_3",
 						ParentId = 2
-					},
-				]);
+					}
+				);
 			});
 
 			modelBuilder
@@ -46,6 +41,18 @@ namespace LinqToDB.EntityFrameworkCore.SqlServer.Tests.Models.IssueModel
 				.HasForeignKey<PatentAssessment>(pa => pa.PatentId)
 				.OnDelete(DeleteBehavior.Restrict);
 
+			modelBuilder.Entity<Issue387Entity>(b =>
+			{
+				b.HasKey(x => new { x.Id });
+
+				b.ComplexProperty(
+					cp => cp.MyComplexType,
+					cp =>
+					{
+						cp.Property(p => p.PropA).HasColumnName("ColumnPropA");
+					}
+				);
+			});
 		}
 	}
 }
